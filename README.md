@@ -1,5 +1,8 @@
 # duckform antd playground!
 
+## 如何开发
+入口文件在 src/playground
+
 playground of [duckform](https://github.com/duckform/duckform)
 
 ### get bun
@@ -15,3 +18,4 @@ bun run build
 # run dev
 bun run dev
 ```
+
