@@ -38,7 +38,7 @@ export const ActionsWidget = observer(() => {
         allowDropChildren={allowDropChildren}
       ></MagicWidget>
       <a
-        href="https://github.com/charlzyx/pro.formily"
+        href="https://github.com/duckform/antd"
         target="_blank"
         rel="noreferrer"
       >
