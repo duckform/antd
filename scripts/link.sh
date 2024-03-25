@@ -1,0 +1,1 @@
+pnpm install @duckform/shared@latest @duckform/core@latest @duckform/react@latest @duckform/settings-form@latest -w
