@@ -19,3 +19,6 @@ bun run build
 bun run dev
 ```
 
+## 进群讨论
+
+![wechat](https://r2.charlzyx.xyz/wechat-duckform.jpg)
