@@ -12,9 +12,10 @@ export const createComponentSchema = (
   decorator: ISchema,
 ) => {
   return {
-    "component-group": component && {
+    "field-quick-group": component && {
       type: "void",
       "x-component": "CollapseItem",
+      "x-component-props": { defaultExpand: false },
       "x-reactions": {
         fulfill: {
           state: {
@@ -81,9 +82,66 @@ export const createFieldSchema = (
   return {
     type: "object",
     properties: {
+      "common-group": {
+        type: "void",
+        "x-component": "CollapseItem",
+        properties: {
+          name: {
+            type: "string",
+            "x-decorator": "FormItem",
+            "x-component": "Input",
+          },
+          title: {
+            type: "string",
+            "x-decorator": "FormItem",
+            "x-component": "Input",
+          },
+          "decorator-group": decorator && {
+            type: "void",
+            "x-reactions": {
+              fulfill: {
+                state: {
+                  visible: '{{!!$form.values["x-decorator"]}}',
+                },
+              },
+            },
+            properties: {
+              "x-decorator-props": {
+                type: "object",
+                properties: {
+                  gridSpan: {
+                    type: "number",
+                    "x-decorator": "FormItem",
+                    "x-component": "NumberPicker",
+                  },
+                  layout: {
+                    type: "string",
+                    enum: ["vertical", "horizontal", "inline", null!],
+                    "x-decorator": "FormItem",
+                    "x-component": "Select",
+                    "x-component-props": {
+                      defaultValue: "horizontal",
+                    },
+                  },
+                },
+              },
+            },
+          },
+          required: {
+            type: "boolean",
+            "x-decorator": "FormItem",
+            "x-component": "Switch",
+          },
+          "x-validator": {
+            type: "array",
+            "x-component": ValidatorSetter,
+          },
+        },
+      },
       "field-group": {
         type: "void",
         "x-component": "CollapseItem",
+        "x-component-props": { defaultExpand: false },
         properties: {
           name: {
             type: "string",
@@ -153,9 +211,66 @@ export const createVoidFieldSchema = (
   return {
     type: "object",
     properties: {
+      "field-quick-group": {
+        type: "void",
+        "x-component": "CollapseItem",
+        properties: {
+          name: {
+            type: "string",
+            "x-decorator": "FormItem",
+            "x-component": "Input",
+          },
+          title: {
+            type: "string",
+            "x-decorator": "FormItem",
+            "x-component": "Input",
+          },
+          "decorator-group": decorator && {
+            type: "void",
+            "x-reactions": {
+              fulfill: {
+                state: {
+                  visible: '{{!!$form.values["x-decorator"]}}',
+                },
+              },
+            },
+            properties: {
+              "x-decorator-props": {
+                type: "object",
+                properties: {
+                  gridSpan: {
+                    type: "number",
+                    "x-decorator": "FormItem",
+                    "x-component": "NumberPicker",
+                  },
+                  layout: {
+                    type: "string",
+                    enum: ["vertical", "horizontal", "inline", null!],
+                    "x-decorator": "FormItem",
+                    "x-component": "Select",
+                    "x-component-props": {
+                      defaultValue: "horizontal",
+                    },
+                  },
+                },
+              },
+            },
+          },
+          required: {
+            type: "boolean",
+            "x-decorator": "FormItem",
+            "x-component": "Switch",
+          },
+          "x-validator": {
+            type: "array",
+            "x-component": ValidatorSetter,
+          },
+        },
+      },
       "field-group": {
         type: "void",
         "x-component": "CollapseItem",
+        "x-component-props": { defaultExpand: false },
         properties: {
           name: {
             type: "string",

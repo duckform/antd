@@ -5,6 +5,9 @@ export const Form = createLocales(Component, {
   "zh-CN": {
     title: "表单",
     settings: {
+      "form-quick-group": "表单快捷配置",
+      "form-layout-group": "表单高级配置",
+      "form-style-group": "表单高级样式",
       scopeDefines: "定义作用域",
       labelCol: "标签网格宽度",
       wrapperCol: "组件网格宽度",
@@ -40,6 +43,9 @@ export const Form = createLocales(Component, {
   "en-US": {
     title: "Form",
     settings: {
+      "form-quick-group": "Form Quick Settings",
+      "form-layout-group": "Form Advance Properties",
+      "form-style-group": "Form Advance Style",
       scopeDefines: "Scope Defines",
       labelCol: "Label Col",
       wrapperCol: "Wrapper Col",

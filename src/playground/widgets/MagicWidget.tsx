@@ -4,9 +4,21 @@ import {
   ThunderboltOutlined,
 } from "@ant-design/icons";
 import { TreeNode } from "@duckform/core";
-import { OutlineTreeWidget, useDesigner } from "@duckform/react";
+import {
+  NodeTitleWidget,
+  OutlineTreeWidget,
+  useDesigner,
+} from "@duckform/react";
 import { observer } from "@formily/react";
-import { Breadcrumb, Button, Drawer, Popover, Space, Tooltip } from "antd";
+import {
+  Breadcrumb,
+  Button,
+  Divider,
+  Drawer,
+  Popover,
+  Space,
+  Tooltip,
+} from "antd";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Magic } from "../features/Magic";
 import { ISchemaTreeNode } from "../features/Magic/shared";
@@ -146,7 +158,19 @@ export const MagicWidget = observer(
             trigger={["click"]}
             placement="bottomLeft"
             title="重新选择"
-            content={<OutlineTreeWidget></OutlineTreeWidget>}
+            destroyTooltipOnHide
+            content={
+              <OutlineTreeWidget
+                renderTitle={(iter) => {
+                  const isActive = iter.id === currentNode?.id;
+                  return (
+                    <div style={{ color: isActive ? "#1890ff" : "" }}>
+                      <NodeTitleWidget node={iter}></NodeTitleWidget>
+                    </div>
+                  );
+                }}
+              ></OutlineTreeWidget>
+            }
           >
             <div
               style={{
