@@ -27,3 +27,4 @@ export * from "./FormGrid";
 export * from "./FormLayout";
 export * from "./ShadowModal";
 export * from "./ProArrayTable";
+export * from "./FromStep";

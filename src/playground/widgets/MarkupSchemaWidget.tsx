@@ -91,6 +91,7 @@ import {
   FormCollapse,
   ArrayTable,
   ArrayCards,
+  FormStep,
 } from '@formily/antd'
 import { Card, Slider, Rate } from 'antd'
 
@@ -134,7 +135,9 @@ const SchemaField = createSchemaField({
     Card,
     Slider,
     Rate,
+    FormStep
   },
+
 })
 
 export default ()=>{

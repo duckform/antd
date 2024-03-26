@@ -60,6 +60,7 @@ import {
   Transfer,
   TreeSelect,
   Upload,
+  FormStep,
 } from "../preset";
 import { ApiEditor, ApiList } from "./features/ApiEditor";
 import { ScopeEditor, ScopePanel } from "./features/ScopeEditor";
@@ -165,6 +166,7 @@ export const App = () => {
                   Card,
                   FormGrid,
                   FormTab,
+                  FormStep,
                   FormLayout,
                   FormCollapse,
                   Space,
@@ -237,6 +239,7 @@ export const App = () => {
                             ArrayTable,
                             Space,
                             FormTab,
+                            FormStep,
                             FormCollapse,
                             FormGrid,
                             FormLayout,

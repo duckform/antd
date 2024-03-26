@@ -26,6 +26,7 @@ import {
   Transfer,
   TreeSelect,
   Upload,
+  FormStep,
 } from "@formily/antd";
 import { createForm } from "@formily/core";
 import { createSchemaField } from "@formily/react";
@@ -91,6 +92,7 @@ const SchemaField = createSchemaField({
     ShadowModal,
     ShadowPopconfirm,
     ProArrayTable,
+    FormStep,
   },
 });
 
@@ -121,7 +123,14 @@ export const PreviewWidget: React.FC<
   const { form: formProps, schema } = transformToSchema(props.tree);
   return (
     <Form {...formProps} form={form}>
-      <SchemaField scope={scope} schema={schema} />
+      <SchemaField
+        scope={{
+          ...scope,
+          log: console.log,
+          FormStep,
+        }}
+        schema={schema}
+      />
     </Form>
   );
 };
