@@ -1,6 +1,6 @@
 import { JSONSchemaLite } from "./json-schema";
 import { Engine, TreeNode } from "@duckform/core";
-import { uid } from "@duckform/shared";
+import { uid } from "@duckform/core/shared";
 import { ISchemaTreeNode, omitVoids, each, updateKeyDeep } from "./shared";
 
 /**

@@ -111,7 +111,8 @@ const getScope = (scope: ReturnType<typeof useFeatureScope>) => {
   const input = `var scope = {${scopeVars.join(",\n")}}`;
   console.log(input);
   // return {};
-  return new Function(`${input}; return scope;`);
+  const fn = new Function(`${input}; return scope;`);
+  return fn();
 };
 
 export const PreviewWidget: React.FC<
@@ -120,6 +121,7 @@ export const PreviewWidget: React.FC<
   const scopeConfig = useFeatureScope();
   const form = useMemo(() => createForm(), []);
   const scope = getScope(scopeConfig);
+  console.log(`🚀 ~ scope:`, scope);
   const { form: formProps, schema } = transformToSchema(props.tree);
   return (
     <Form {...formProps} form={form}>

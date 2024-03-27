@@ -6,7 +6,7 @@ import {
   useNodeIdProps,
   useTreeNode,
 } from "@duckform/react";
-import { uid } from "@duckform/shared";
+import { uid } from "@duckform/core/shared";
 import { observer } from "@formily/react";
 import { Steps } from "antd";
 import { StepProps, StepsProps } from "antd/lib/steps";

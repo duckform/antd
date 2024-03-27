@@ -9,7 +9,7 @@ import { Form as FormSchema } from "./schema";
 import { FormLayout as FormLayoutSchema } from "../FormLayout/schema";
 import * as Locales from "./locale";
 import "./styles.less";
-import { uid } from "@duckform/shared";
+import { uid } from "@duckform/core/shared";
 
 export const Form: DnFC<React.ComponentProps<typeof FormilyForm>> = observer(
   (props) => {

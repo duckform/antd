@@ -1,10 +1,4 @@
 import { ISchema } from "@formily/json-schema";
-import {
-  DataSourceSetter,
-  ReactionsSetter,
-  ValidatorSetter,
-} from "@duckform/settings-form";
-import { FormItemSwitcher } from "../../common/FormItemSwitcher";
 import * as AllSchemas from "../../common/schemas";
 
 export const createComponentSchema = (
@@ -12,10 +6,9 @@ export const createComponentSchema = (
   decorator: ISchema,
 ) => {
   return {
-    "field-quick-group": component && {
+    "component-group": component && {
       type: "void",
       "x-component": "CollapseItem",
-      "x-component-props": { defaultExpand: false },
       "x-reactions": {
         fulfill: {
           state: {
@@ -82,66 +75,9 @@ export const createFieldSchema = (
   return {
     type: "object",
     properties: {
-      "common-group": {
-        type: "void",
-        "x-component": "CollapseItem",
-        properties: {
-          name: {
-            type: "string",
-            "x-decorator": "FormItem",
-            "x-component": "Input",
-          },
-          title: {
-            type: "string",
-            "x-decorator": "FormItem",
-            "x-component": "Input",
-          },
-          "decorator-group": decorator && {
-            type: "void",
-            "x-reactions": {
-              fulfill: {
-                state: {
-                  visible: '{{!!$form.values["x-decorator"]}}',
-                },
-              },
-            },
-            properties: {
-              "x-decorator-props": {
-                type: "object",
-                properties: {
-                  gridSpan: {
-                    type: "number",
-                    "x-decorator": "FormItem",
-                    "x-component": "NumberPicker",
-                  },
-                  layout: {
-                    type: "string",
-                    enum: ["vertical", "horizontal", "inline", null!],
-                    "x-decorator": "FormItem",
-                    "x-component": "Select",
-                    "x-component-props": {
-                      defaultValue: "horizontal",
-                    },
-                  },
-                },
-              },
-            },
-          },
-          required: {
-            type: "boolean",
-            "x-decorator": "FormItem",
-            "x-component": "Switch",
-          },
-          "x-validator": {
-            type: "array",
-            "x-component": ValidatorSetter,
-          },
-        },
-      },
       "field-group": {
         type: "void",
         "x-component": "CollapseItem",
-        "x-component-props": { defaultExpand: false },
         properties: {
           name: {
             type: "string",
@@ -182,15 +118,15 @@ export const createFieldSchema = (
           },
           enum: {
             "x-decorator": "FormItem",
-            "x-component": DataSourceSetter,
+            "x-component": "DataSourceSetter",
           },
           "x-reactions": {
             "x-decorator": "FormItem",
-            "x-component": ReactionsSetter,
+            "x-component": "ReactionsSetter",
           },
           "x-validator": {
             type: "array",
-            "x-component": ValidatorSetter,
+            "x-component": "ValidatorSetter",
           },
           required: {
             type: "boolean",
@@ -211,66 +147,9 @@ export const createVoidFieldSchema = (
   return {
     type: "object",
     properties: {
-      "field-quick-group": {
-        type: "void",
-        "x-component": "CollapseItem",
-        properties: {
-          name: {
-            type: "string",
-            "x-decorator": "FormItem",
-            "x-component": "Input",
-          },
-          title: {
-            type: "string",
-            "x-decorator": "FormItem",
-            "x-component": "Input",
-          },
-          "decorator-group": decorator && {
-            type: "void",
-            "x-reactions": {
-              fulfill: {
-                state: {
-                  visible: '{{!!$form.values["x-decorator"]}}',
-                },
-              },
-            },
-            properties: {
-              "x-decorator-props": {
-                type: "object",
-                properties: {
-                  gridSpan: {
-                    type: "number",
-                    "x-decorator": "FormItem",
-                    "x-component": "NumberPicker",
-                  },
-                  layout: {
-                    type: "string",
-                    enum: ["vertical", "horizontal", "inline", null!],
-                    "x-decorator": "FormItem",
-                    "x-component": "Select",
-                    "x-component-props": {
-                      defaultValue: "horizontal",
-                    },
-                  },
-                },
-              },
-            },
-          },
-          required: {
-            type: "boolean",
-            "x-decorator": "FormItem",
-            "x-component": "Switch",
-          },
-          "x-validator": {
-            type: "array",
-            "x-component": ValidatorSetter,
-          },
-        },
-      },
       "field-group": {
         type: "void",
         "x-component": "CollapseItem",
-        "x-component-props": { defaultExpand: false },
         properties: {
           name: {
             type: "string",
@@ -321,12 +200,12 @@ export const createVoidFieldSchema = (
           },
           "x-reactions": {
             "x-decorator": "FormItem",
-            "x-component": ReactionsSetter,
+            "x-component": "ReactionsSetter",
           },
           "x-decorator": {
             type: "string",
             "x-decorator": "FormItem",
-            "x-component": FormItemSwitcher,
+            "x-component": "FormItemSwitcher",
           },
         },
       },

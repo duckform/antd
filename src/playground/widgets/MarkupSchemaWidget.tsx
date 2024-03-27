@@ -1,5 +1,5 @@
 import { TreeNode } from "@duckform/core";
-import { MonacoInput } from "@duckform/settings-form";
+import { MonacoInput } from "@duckform/react/settings-form";
 import { isEmpty, isPlainObj } from "@formily/shared";
 import React from "react";
 

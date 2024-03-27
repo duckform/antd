@@ -1,5 +1,5 @@
 import { ITreeNode, TreeNode } from "@duckform/core";
-import { MonacoInput } from "@duckform/settings-form";
+import { MonacoInput } from "@duckform/react/settings-form";
 import React from "react";
 import { transformToSchema, transformToTreeNode } from "../utils/transformer";
 import { useFeatureScope } from "../features/ctx";

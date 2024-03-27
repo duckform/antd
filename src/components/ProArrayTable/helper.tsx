@@ -5,7 +5,7 @@ import {
   hasNodeByComponentPath,
   queryNodesByComponentPath,
 } from "../../shared";
-import { uid } from "@duckform/shared";
+import { uid } from "@duckform/core/shared";
 
 const PREFIX = "ProArrayTable";
 

@@ -21,7 +21,7 @@ import {
   Workspace,
   WorkspacePanel,
 } from "@duckform/react";
-import { SettingsForm, setNpmCDNRegistry } from "@duckform/settings-form";
+import { SettingsForm, setNpmCDNRegistry } from "@duckform/react/settings-form";
 import { Button } from "antd";
 import "antd/dist/antd.less";
 import React, { useMemo, useState } from "react";
@@ -104,6 +104,7 @@ const PANEL_CODES = {
 export const App = () => {
   const [panel, setPanel] = useState<number>(0);
   const [shared, setShared] = useLocalStorageState("dn_apis_store");
+  console.log({ Input });
   const engine = useMemo(
     () =>
       createDesigner({

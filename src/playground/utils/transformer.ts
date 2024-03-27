@@ -1,5 +1,5 @@
 import { ITreeNode } from "@duckform/core";
-import { clone, uid } from "@duckform/shared";
+import { clone, uid } from "@duckform/core/shared";
 import { ISchema, Schema } from "@formily/json-schema";
 
 export interface ITransformerOptions {

@@ -1,6 +1,6 @@
 import { createBehavior } from "@duckform/core";
 import { DnFC, useComponents, useDesigner, useTreeNode } from "@duckform/react";
-import { isArr, isStr } from "@duckform/shared";
+import { isArr, isStr } from "@duckform/core/shared";
 import { FormItem } from "@formily/antd";
 import { FormPath } from "@formily/core";
 import {

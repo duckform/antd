@@ -1,4 +1,4 @@
-import { uid } from "@duckform/shared";
+import { uid } from "@duckform/core/shared";
 import { ISchemaTreeNode, updateKeyDeep } from "./features/Magic/shared";
 import { message } from "antd";
 

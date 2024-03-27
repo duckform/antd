@@ -1,5 +1,5 @@
 import { usePrefix } from "@duckform/react";
-import { MonacoInput } from "@duckform/settings-form";
+import { MonacoInput } from "@duckform/react/settings-form";
 import { observer } from "@formily/reactive-react";
 import { Card, Menu } from "antd";
 import { useEffect, useId, useRef, useState } from "react";
