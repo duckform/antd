@@ -22,7 +22,7 @@ import {
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { DnDTree } from "./DnDTree";
 import { JSONSchemaLite, toJSONSchema } from "./json-schema";
-import { addVoidTo, allowDrop, buildSchemaTree, onDropInsert } from "./magic";
+import { addVoidTo, buildSchemaTree, onDropInsert } from "./magic";
 import { ISchemaTreeNode } from "./shared";
 
 const removeById = (id: string, tree: ISchemaTreeNode[]) => {
@@ -68,7 +68,9 @@ interface SchemaNodeProps {
 }
 
 const useSchemaNode = (props: SchemaNodeProps) => {
-  const [node, setNode] = useState(props.transform(props.data, "init"));
+  const [node, setNode] = useState(
+    Object.assign(props.data, props.transform(props.data, "init")),
+  );
   const name = useMemo(() => node.props.name, [node.props.name]);
   const title = useMemo(() => node.props.title, [node.props.title]);
   const component = useMemo(
@@ -299,7 +301,7 @@ const getColor = (x: JSONSchemaLite["type"]) => {
 export interface MagicProps
   extends Pick<
     React.ComponentProps<typeof DnDTree>,
-    "allowDropBefore" | "allowDropChildren"
+    "allowDrop" | "allowDropBefore" | "allowDropChildren"
   > {
   transform: SchemaNodeProps["transform"];
   onChange?: (tree: ISchemaTreeNode[], includRoot: boolean) => void;
@@ -328,35 +330,18 @@ export const Magic = (props: MagicProps) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const allowNodeDrop = useMemo(() => {
-    return allowDrop(tree[0]);
-  }, [tree[0]]);
-
   const [boxing, setBoxing] = useState<"boxed" | "unbox">("boxed");
 
   useEffect(() => {
     try {
       const run = new Function(`return ${input}`);
       const parsed = run();
-      // setLoading(true);
       const schema = toJSONSchema(parsed);
       setTree([buildSchemaTree(schema)]);
-      // .then(([root, defs]) => {
-      //   setTree([buildSchemaTree(resolveRefs(root, defs))]);
-      // })
-      // .finally(() => {
-      //   setLoading(false);
-      // });
     } catch (error: any) {
       setError(`输入不合法， 请检查, ${error.message}`);
     }
   }, [input]);
-
-  // const insertInto = () => {
-  //   const root = tree[0];
-
-  //   insertToNode(engine, root, boxing === "boxed");
-  // };
 
   useEffect(() => {
     props.onChange?.(tree, boxing === "boxed");
@@ -403,7 +388,7 @@ export const Magic = (props: MagicProps) => {
         tree.length > 0 ? (
           <DnDTree
             data={tree}
-            allowDrop={allowNodeDrop}
+            allowDrop={props.allowDrop}
             allowDropBefore={props.allowDropBefore}
             allowDropChildren={props.allowDropChildren}
             onDropInsert={(to, source, target) => {
@@ -413,7 +398,7 @@ export const Magic = (props: MagicProps) => {
             render={(data) => {
               return (
                 <SchemaNode
-                  key={data.id}
+                  key={data.key}
                   boxing={boxing}
                   onBoxingChange={setBoxing}
                   transform={props.transform}

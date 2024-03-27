@@ -12,6 +12,7 @@ const typeNarrowing = (
 ): ISchemaTreeNode["props"]["type"] => {
   return t === "null" ? "void" : t === "integer" ? "number" : t;
 };
+
 export const buildSchemaTree = (
   schema: JSONSchemaLite,
   name?: string,
@@ -100,6 +101,7 @@ export const onDropInsert = (
   fromParentNode.children = fromParentNode.children.filter((node, idx) => {
     return node.key !== fromKey;
   });
+  console.log("drop to", to);
   if (to === "before") {
     // update key
     updateKeyDeep(fromNode, fromParentKey, toParentKey);
@@ -112,67 +114,3 @@ export const onDropInsert = (
   }
   // console.log({ to, dropKey, dragKey });
 };
-
-export const allowDrop =
-  (tree: ISchemaTreeNode) =>
-  (dragKey: string, dropKey: string): [boolean, boolean] => {
-    // 自己不能拖动
-    if (dropKey === dragKey) {
-      // console.log("[false, falsse] by self ", { dragKey, dropKey });
-      return [false, false];
-    }
-    const dragKeys = dragKey.split(".");
-    const dragParentKeys = dragKeys.slice(0, -1);
-    const dropKeys = dropKey.split(".");
-    const dropParentKeys = dropKeys.slice(0, -1);
-
-    let dragNode: ISchemaTreeNode;
-    let dropNode: ISchemaTreeNode;
-
-    each(tree, (node) => {
-      if (dragNode && dropNode) return false;
-      if (node.key === dragKey) {
-        dragNode = node;
-      }
-      if (node.key === dropKey) {
-        dropNode = node;
-      }
-    });
-    // node 没找到不能拖动
-    const isNotFound = !dragNode || !dropNode;
-    if (isNotFound) {
-      // console.log("[false, false] by node not found. ", { dragKey, dropKey });
-      return [false, false];
-    }
-
-    const isParent = dragParentKeys.join(".") === dropKey;
-    const isVoidParent = omitVoids(dragParentKeys) === omitVoids(dropKey);
-
-    if (isParent) {
-      // console.log("[false, true] by parent. ", { dragKey, dropKey });
-      return [false, true];
-    }
-    if (isVoidParent) {
-      // console.log("[false, true] by void parent. ", { dragKey, dropKey });
-      return [false, true];
-    }
-
-    const isSlibing = dragParentKeys.join(".") === dropParentKeys.join(".");
-    const isVoidSlibing =
-      omitVoids(dragParentKeys) === omitVoids(dropParentKeys);
-    if (isSlibing) {
-      // console.log("[true, false] by slibings. ", {
-      //   dragKey,
-      //   dropKey,
-      // });
-      return [true, false];
-    }
-
-    if (isVoidSlibing) {
-      // console.log("[true, false] by void slibings. ", { dragKey, dropKey });
-      return [true, false];
-    }
-
-    // console.log("[false, false] by default. ", { dragKey, dropKey });
-    return [false, false];
-  };

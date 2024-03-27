@@ -1,7 +1,12 @@
 import { useDrag, useDrop } from "ahooks";
-import { useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { ISchemaTreeNode } from "../shared";
 import "./index.less";
+import {
+  defaultAllowDrop,
+  defaultAllowDropBefore,
+  defaultAllowDropChildren,
+} from "./defaultProps";
 
 export type TreeLike = {
   key: string;
@@ -39,7 +44,7 @@ const draging = {
   current: null,
 };
 
-const DropableBox = (props: {
+interface DropableBoxProps {
   dragKey: string;
   allowDrop?: (dragKey: string, dropKey: string) => [boolean, boolean];
   children: React.ReactNode;
@@ -50,7 +55,9 @@ const DropableBox = (props: {
     source: string,
     target: string,
   ) => void;
-}) => {
+}
+
+const DropableBox = (props: DropableBoxProps) => {
   const dropBefore = useRef(null);
   const dropAfter = useRef(null);
   const dragNode = useRef(null);
@@ -66,6 +73,7 @@ const DropableBox = (props: {
   useDrag(props.dragKey, dragNode, {
     onDragStart() {
       draging.current = props.dragKey;
+      console.log(`🚀 ~ onDragStart ~ props.dragKey:`, props.dragKey);
     },
     onDragEnd() {
       draging.current = null;
@@ -98,6 +106,7 @@ const DropableBox = (props: {
       setHover(false);
       setOpacity({ after: 0, before: 0 });
       if (!allowRef.current.before) return;
+      console.log("dropKey", text, "dragKey", props.dragKey);
       props?.onDropInsert?.("before", JSON.parse(text), props.dragKey);
     },
   });
@@ -157,18 +166,24 @@ const DropableBox = (props: {
   );
 };
 
-export const DnDTree = (
-  props: {
-    data: ISchemaTreeNode[];
-    render: (data: ISchemaTreeNode) => React.ReactNode;
-    allowDropBefore?: (data: ISchemaTreeNode) => boolean;
-    allowDropChildren?: (data: ISchemaTreeNode) => boolean;
-    deepth?: number;
-  } & Pick<
-    React.ComponentProps<typeof DropableBox>,
-    "allowDrop" | "onDropInsert"
-  >,
-) => {
+export const DnDTree = (props: {
+  data: ISchemaTreeNode[];
+  render: (data: ISchemaTreeNode) => React.ReactNode;
+  allowDrop?: DropableBoxProps["allowDrop"];
+  allowDropBefore?: (data: ISchemaTreeNode) => boolean;
+  allowDropChildren?: (data: ISchemaTreeNode) => boolean;
+  onDropInsert: DropableBoxProps["onDropInsert"];
+  deepth?: number;
+}) => {
+  const allowDropAsDefault = useCallback(defaultAllowDrop(props.data?.[0]), [
+    props.data?.[0],
+  ]);
+
+  const {
+    allowDropBefore = defaultAllowDropBefore,
+    allowDropChildren = defaultAllowDropChildren,
+    allowDrop = allowDropAsDefault,
+  } = props;
   return props?.data?.map((child) => {
     return (
       <div
@@ -178,16 +193,19 @@ export const DnDTree = (
         }}
       >
         <DropableBox
-          onDropInsert={props.onDropInsert}
-          allowDrop={props.allowDrop}
           dragKey={child.key}
-          dropBefore={props.allowDropBefore?.(child)}
-          dropChildren={props.allowDropChildren?.(child)}
+          onDropInsert={props.onDropInsert}
+          allowDrop={allowDrop}
+          dropBefore={allowDropBefore?.(child)}
+          dropChildren={allowDropChildren?.(child)}
         >
           {props.render(child as any)}
         </DropableBox>
         <DnDTree
           {...props}
+          allowDrop={allowDrop}
+          allowDropBefore={allowDropBefore}
+          allowDropChildren={allowDropChildren}
           key={child.key}
           deepth={(props.deepth ?? 0) + 1}
           data={child.children}

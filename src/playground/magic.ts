@@ -160,8 +160,15 @@ export const transform = (
         };
         const oldKey = item.key;
         item.key = oldKey.replace(prefix, columnKey);
+
         updateKeyDeep(item, oldKey, columnKey);
         const child = item;
+        console.log(
+          `🚀 ~ items.children=items.children.map ~ item.key:`,
+          oldKey,
+          item.key,
+          child.key,
+        );
         voidColumn.children.push(child);
         voidColumn.state.visited = true;
 

@@ -11,7 +11,9 @@
     "registry": "https://registry.npmjs.org/",
     "access": "public"
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/duckform/antd.git"
@@ -24,7 +26,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@ant-design/icons": "^4.8.1",
+    "@ant-design/icons": "^4.8.3",
     "@duckform/core": "0.1.0-alpha.2",
     "@duckform/react": "0.1.0-alpha.2",
     "@formily/antd": "^2.3.1",
@@ -36,24 +38,23 @@
     "@formily/shared": "^2.3.1",
     "@pro.formily/antd": "^1.3.7",
     "ahooks": "^3.7.10",
-    "antd": "^4.24.15",
+    "antd": "^4.24.16",
     "classnames": "^2.5.1",
     "react": "^18.2.*",
     "react-dom": "^18.2.*",
     "react-is": "^18.2.*"
   },
   "devDependencies": {
-    "@babel/parser": "^7.24.0",
-    "@biomejs/biome": "^1.6.1",
+    "@biomejs/biome": "^1.6.3",
     "@redocly/json-to-json-schema": "^0.0.1",
-    "@rsbuild/core": "^0.4.15",
-    "@rsbuild/plugin-react": "^0.4.15",
-    "@rsdoctor/rspack-plugin": "^0.1.5",
-    "@types/bun": "^1.0.8",
-    "@types/node": "^20.11.27",
+    "@rsbuild/core": "^0.5.4",
+    "@rsbuild/plugin-react": "^0.5.4",
+    "@rsdoctor/rspack-plugin": "^0.1.8",
+    "@types/bun": "^1.0.11",
+    "@types/node": "^20.11.30",
     "@types/react": "18.2.65",
     "@types/react-dom": "18.2.22",
     "father": "^4.4.0",
-    "typescript": "^5.4.2"
+    "typescript": "^5.4.3"
   }
 }
