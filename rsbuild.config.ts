@@ -17,12 +17,6 @@ export default defineConfig({
       }
     },
   },
-  performance: {
-    // chunkSplit: {
-    //   strategy: "split-by-size",
-    //   maxSize: 1024 * 150,
-    // },
-  },
   source: {
     alias: {
       "@duckform/core": "./node_modules/@duckform/core/dist/esm",
