@@ -13,9 +13,11 @@ import {
 } from "@dnd-kit/sortable";
 import { TreeNode } from "@duckform/core";
 import { observer } from "@formily/reactive-react";
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
+import { getComponentList, getTransformer, transformers } from "./transformers";
+import { Select } from "antd";
 
-const dropInto = {
+const DropingInto = {
   id: "",
   to: "",
 };
@@ -40,6 +42,13 @@ export const SortableItem = observer(
     } = useSortable({ id: props.id });
     const [overState, setOverState] = useState("");
     const node = props.node;
+    const options = getComponentList(node).map((item) => {
+      return {
+        label: item,
+        value: item,
+        key: item,
+      };
+    });
 
     useDndMonitor({
       onDragMove: ({ active, over }) => {
@@ -63,15 +72,15 @@ export const SortableItem = observer(
 
           const isLeft = left < 0;
           if (isLeft && over.id === props.id) {
-            dropInto.to = "before";
-            dropInto.id = props.id;
+            DropingInto.to = "before";
+            DropingInto.id = props.id;
             return setOverState("before");
           }
           const preNode = props.takePrev(over.id.toString());
           if (!preNode) return setOverState("");
           if (!isLeft && preNode.id === props.id) {
-            dropInto.to = "after";
-            dropInto.id = props.id;
+            DropingInto.to = "after";
+            DropingInto.id = props.id;
             setOverState("after");
           } else {
             setOverState("");
@@ -89,14 +98,14 @@ export const SortableItem = observer(
           const left = activeLeft - overLeft;
           const isRight = left > 0;
           if (isRight && over.id === props.id) {
-            dropInto.to = "after";
-            dropInto.id = props.id;
+            DropingInto.to = "after";
+            DropingInto.id = props.id;
             return setOverState("after");
           } else {
             const nextNode = props.takeNext(over.id.toString());
             if (!isRight && nextNode?.id === props.id) {
-              dropInto.to = "before";
-              dropInto.id = props.id;
+              DropingInto.to = "before";
+              DropingInto.id = props.id;
               return setOverState("before");
             } else {
               setOverState("");
@@ -112,7 +121,7 @@ export const SortableItem = observer(
       },
     });
 
-    const style = useMemo(() => {
+    const style = (() => {
       const itemStyle: React.CSSProperties = {
         position: "relative",
         touchAction: "none",
@@ -144,7 +153,7 @@ export const SortableItem = observer(
           };
 
       return computedStyle;
-    }, [isDragging, transform, transition]);
+    })();
 
     return (
       <div
@@ -180,6 +189,56 @@ export const SortableItem = observer(
             </span>
             <span>/{overState}/</span>
             <span style={{ color: "rgba(0, 0, 0, 0.3)" }}>{node.id}</span>
+          </div>
+          <div>
+            <Select
+              options={options}
+              size="small"
+              style={{ width: "200px" }}
+              value={node?.props?.["x-component"] ?? ""}
+              onSelect={(item) => {
+                console.log(`🚀 ~ item:`, item);
+                const Component = node.props["x-component"];
+                if (Component) {
+                  const reseter = getTransformer(node);
+                  console.log(`🚀 ~ reseter:`, reseter);
+                  if (reseter?.reset) {
+                    reseter.reset(node);
+                  }
+                }
+                node.props["x-component"] = item;
+                const transformer = getTransformer(node);
+                console.log(`🚀 ~ transformer:`, transformer);
+                if (transformer?.transform) {
+                  transformer.transform(node);
+                }
+              }}
+            ></Select>
+            {/* <select
+              value={node?.props?.["x-component"] ?? ""}
+              onSelect={(e) => {
+                const Component = node.props["x-component"];
+                if (Component) {
+                  const transformer = getTransformer(node);
+                  if (transformer?.reset) {
+                    transformer.reset(node);
+                  }
+                }
+                node.props["x-component"] = e.target.value;
+                const next = getTransformer(node);
+                if (next?.transform) {
+                  next.transform(node);
+                }
+              }}
+            >
+              {options.map((item) => {
+                return (
+                  <option key={item} value={item}>
+                    {item}
+                  </option>
+                );
+              })}
+            </select> */}
           </div>
           <button
             type="button"
@@ -236,10 +295,11 @@ export const SortableBox = observer(
     const handleDragEnd: React.ComponentProps<typeof DndContext>["onDragEnd"] =
       (event) => {
         const { active, over, delta } = event;
+        if (!active || !over) return;
         const isBefore = delta.x < 0;
         const fromNode = items.find((x) => x.id === active.id);
         const toNode = items.find((x) => x.id === over.id);
-        console.log("dropito.id", dropInto);
+        console.log("dropito.id", DropingInto);
 
         // if (active.id !== over.id) {
         //   if (isBefore) {

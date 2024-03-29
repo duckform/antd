@@ -18,7 +18,7 @@ export const QuickTreeNode = observer(
     }, [props.json]);
 
     return (
-      <div style={{ width: "400px" }}>
+      <div style={{ width: "800px" }}>
         <SortableBox root={tree}></SortableBox>
       </div>
     );
