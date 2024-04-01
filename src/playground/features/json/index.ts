@@ -24,6 +24,7 @@ export const jsonSchemaToTreeNode = (
     id: uid(),
     componentName: "Field",
     props: {
+      "x-decorator": "FormItem",
       type: propsTypeNarrowing(schema.type),
       name: name,
       title: schema.title ?? name,

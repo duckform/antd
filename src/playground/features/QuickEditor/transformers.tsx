@@ -3,7 +3,7 @@ import { JSONSchemaLite } from "../json/utils";
 
 type Transformer = {
   accepts: JSONSchemaLite["type"][];
-  // match?: (node: TreeNode) => boolean;
+  disable?: (node: TreeNode) => boolean;
   transform?: (node: TreeNode) => TreeNode;
   reset?: (node: TreeNode) => TreeNode;
 };
@@ -31,6 +31,9 @@ const getNodeProps = (
 
 const ArrayTable: Transformer = {
   accepts: ["array"],
+  disable: (node: TreeNode) => {
+    return !/object|array/.test(getNodeProps(node.children[0], "type"));
+  },
   // match: (node: TreeNode) => {
   //   return (
   //     getNodeProps(node, "x-component") === "ArrayTable" &&
@@ -135,11 +138,10 @@ const ArrayTable: Transformer = {
   reset: (node: TreeNode) => {
     // if (!ArrayTable.match(node)) return node;
     const arrayItems = node.children?.[0];
-    console.log(`🚀 ~ arrayItems:`, arrayItems);
-    const done = arrayItems.children?.find?.(
+    const changed = arrayItems.children?.find?.(
       (x) => getNodeProps(x, "x-component") === "ArrayTable.Column",
     );
-    if (!done) return node;
+    if (!changed) return node;
 
     const items = arrayItems?.children ?? [];
 
@@ -236,10 +238,10 @@ const ArrayCards: Transformer = {
   reset: (node: TreeNode) => {
     // if (!ArrayCards.match(node)) return node;
     const arrayItems = node.children?.[0];
-    const done = arrayItems?.children?.find?.(
+    const changed = arrayItems?.children?.find?.(
       (x) => !/^ArrayCards\./.test(getNodeProps(x, "x-component")),
     );
-    if (!done) return node;
+    if (!changed) return node;
 
     let items = arrayItems;
 
@@ -253,6 +255,7 @@ const ArrayCards: Transformer = {
     } else {
       items.setChildren(...clean);
     }
+    console.log("ArrayCards reset", items);
     node.setChildren(items);
   },
 };
@@ -326,16 +329,16 @@ const ArrayItems: Transformer = {
   reset: (node: TreeNode) => {
     // if (!ArrayItems.match(node)) return node;
     const arrayItems = node.children?.[0];
-    const done = arrayItems?.children?.find?.((x) =>
+    const changed = arrayItems?.children?.find?.((x) =>
       /^ArrayItems\./.test(getNodeProps(x, "x-component")),
     );
-    if (done) return node;
+    if (!changed) return node;
 
     let items = arrayItems;
 
     const children = arrayItems?.children ?? [];
-    const clean = children.filter((n) =>
-      /^ArrayItems\./.test(n.props?.["x-component"]),
+    const clean = children.filter(
+      (n) => !/^ArrayItems\./.test(n.props?.["x-component"]),
     );
 
     if (getNodeProps(items, "type") === "void") {
@@ -343,16 +346,16 @@ const ArrayItems: Transformer = {
     } else {
       items.setChildren(...clean);
     }
+    console.log("ArrayItems reset", items);
     node.setChildren(items);
   },
 };
 
 const FormGrid: Transformer = {
-  accepts: ["void", "object"],
-  // match: (node) => {
-  //   return getNodeProps(node, "x-component") === "FormGrid";
-  // },
+  accepts: ["void"],
   transform: (node) => {
+    const done = getNodeProps(node, "x-component") === "FormGrid";
+    if (done) return;
     const props = node.props["x-components-props"];
     node.props["x-components-props"] = {
       ...props,
@@ -363,8 +366,10 @@ const FormGrid: Transformer = {
     return node;
   },
   reset: (node) => {
-    // if (!FormGrid.match(node)) return node;
+    const changed = getNodeProps(node, "x-component") === "FormGrid";
+    if (!changed) return;
     const props = node.props["x-components-props"];
+    node.props["x-decorator"] = "FormItem";
     node.props["x-components-props"] = { ...props._memo };
     return node;
   },
@@ -389,13 +394,15 @@ export const getTransformer = (node: TreeNode): Transformer | undefined => {
 
 export const getComponentList = (node: TreeNode) => {
   const list = Object.keys(transformers).reduce((list, Component) => {
-    const accapt = transformers[Component].accepts.includes(
-      getNodeProps(node, "type"),
-    );
-    if (accapt) {
+    const transformer = transformers[Component];
+    const accapt = transformer.accepts.includes(getNodeProps(node, "type"));
+    if (accapt && !transformer?.disable?.(node)) {
       list.push(Component);
     }
     return list;
   }, []);
+  if (/object|void/.test(node.props.type)) {
+    list.unshift("");
+  }
   return list;
 };

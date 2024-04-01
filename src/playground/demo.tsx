@@ -1,4 +1,4 @@
-import { QuickTreeNode } from "./features/QuickTreeNode";
+import { QuickEditor } from "./features/QuickEditor";
 
 const json = {
   hello: "world",
@@ -15,7 +15,8 @@ const json = {
 export const App = () => {
   return (
     <div style={{ padding: 40 }}>
-      <QuickTreeNode json={json}></QuickTreeNode>
+      {/* <QuickEditor></QuickEditor> */}
+      {/* <QuickTreeNode json={json}></QuickTreeNode> */}
     </div>
   );
 };

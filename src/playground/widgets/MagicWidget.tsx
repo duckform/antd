@@ -13,17 +13,16 @@ import { observer } from "@formily/react";
 import {
   Breadcrumb,
   Button,
-  Divider,
   Drawer,
   Popover,
+  Radio,
   Space,
   Tooltip,
 } from "antd";
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { Magic } from "../features/Magic";
-import { ISchemaTreeNode } from "../features/Magic/shared";
+import { QuickEditor } from "../features/QuickEditor";
 
-const schemaTreeToTreeNode = (node: ISchemaTreeNode) => {
+const schemaTreeToTreeNode = (node: TreeNode) => {
   delete node.props.state;
   delete node.props.required;
   delete node.props["x-component-options"];
@@ -34,7 +33,7 @@ const schemaTreeToTreeNode = (node: ISchemaTreeNode) => {
 
 const insertToParent = (
   parent: TreeNode,
-  tree: ISchemaTreeNode,
+  tree: TreeNode,
   includeRoot?: boolean,
 ) => {
   schemaTreeToTreeNode(tree);
@@ -64,96 +63,94 @@ const takeParents = (node: TreeNode): string[] => {
   return names.filter(Boolean).reverse();
 };
 
-export const MagicWidget = observer(
-  (props: React.ComponentProps<typeof Magic>) => {
-    const designer = useDesigner();
-    const [currentNode, setCurrentNode] = useState<TreeNode | null>(null);
-    useEffect(() => {
-      const dispose = designer.subscribe((payload) => {
-        if (payload.type === "select:node") {
-          setCurrentNode(payload.data?.source?.[0]);
-        }
-      });
-      return dispose;
-    }, [designer]);
+export const MagicWidget = observer(() => {
+  const designer = useDesigner();
+  const [currentNode, setCurrentNode] = useState<TreeNode | null>(null);
+  useEffect(() => {
+    const dispose = designer.subscribe((payload) => {
+      if (payload.type === "select:node") {
+        setCurrentNode(payload.data?.source?.[0]);
+      }
+    });
+    return dispose;
+  }, [designer]);
 
-    const names = useMemo(() => {
-      if (!currentNode) return [""];
-      return takeParents(currentNode);
-    }, [currentNode]);
+  const names = useMemo(() => {
+    if (!currentNode) return [""];
+    return takeParents(currentNode);
+  }, [currentNode]);
 
-    const root = useRef<ISchemaTreeNode[]>([]);
-    const boxing = useRef(false);
+  const tree = useRef<TreeNode>();
 
-    const [magicOpen, setMagicOpen] = useState(false);
+  const boxing = useRef(true);
 
-    const canAppend = useMemo(() => {
-      const nodeType = currentNode?.props?.type;
-      return nodeType === "void" || nodeType === "object";
-    }, [currentNode]);
+  const [magicOpen, setMagicOpen] = useState(false);
 
-    return (
-      <React.Fragment>
-        <Button
-          type="primary"
-          icon={<ThunderboltOutlined></ThunderboltOutlined>}
-          onClick={() => {
-            setMagicOpen(true);
-          }}
-        >
-          快速创建
-        </Button>
+  const canAppend = useMemo(() => {
+    const nodeType = currentNode?.props?.type;
+    return nodeType === "void" || nodeType === "object";
+  }, [currentNode]);
 
-        <Drawer
-          width="960px"
-          title="⚡快速创建"
-          open={magicOpen}
-          bodyStyle={{ padding: 0 }}
-          onClose={() => setMagicOpen(false)}
-          extra={
-            <Space>
+  return (
+    <React.Fragment>
+      <Button
+        type="primary"
+        icon={<ThunderboltOutlined></ThunderboltOutlined>}
+        onClick={() => {
+          setMagicOpen(true);
+        }}
+      >
+        快速创建
+      </Button>
+
+      <Drawer
+        width="960px"
+        title="⚡快速创建"
+        open={magicOpen}
+        bodyStyle={{ padding: 16 }}
+        onClose={() => setMagicOpen(false)}
+        extra={
+          <Space>
+            <Button
+              type="link"
+              onClick={() => {
+                console.log("tree.current", tree.current);
+                insertToParent(
+                  designer.getCurrentTree().root,
+                  tree.current,
+                  boxing.current,
+                );
+                setMagicOpen(false);
+              }}
+              icon={<ThunderboltOutlined></ThunderboltOutlined>}
+            >
+              添加到根节点
+            </Button>
+            {currentNode ? (
               <Button
-                type="link"
+                type={canAppend ? "link" : "text"}
+                disabled={!canAppend}
                 onClick={() => {
-                  insertToParent(
-                    designer.getCurrentTree().root,
-                    root.current[0],
-                    boxing.current,
-                  );
+                  insertToParent(currentNode, tree.current, boxing.current);
                   setMagicOpen(false);
                 }}
-                icon={<ThunderboltOutlined></ThunderboltOutlined>}
+                icon={
+                  canAppend ? (
+                    <ThunderboltOutlined></ThunderboltOutlined>
+                  ) : (
+                    <Tooltip title="只有 void / object 对象可以追加子节点 ">
+                      <QuestionCircleOutlined></QuestionCircleOutlined>
+                    </Tooltip>
+                  )
+                }
               >
-                添加到根节点
+                添加到 <b>[{names[names.length - 1]}]</b>
               </Button>
-              {currentNode ? (
-                <Button
-                  type={canAppend ? "link" : "text"}
-                  disabled={!canAppend}
-                  onClick={() => {
-                    insertToParent(
-                      currentNode,
-                      root.current[0],
-                      boxing.current,
-                    );
-                    setMagicOpen(false);
-                  }}
-                  icon={
-                    canAppend ? (
-                      <ThunderboltOutlined></ThunderboltOutlined>
-                    ) : (
-                      <Tooltip title="只有 void / object 对象可以追加子节点 ">
-                        <QuestionCircleOutlined></QuestionCircleOutlined>
-                      </Tooltip>
-                    )
-                  }
-                >
-                  添加到 <b>[{names[names.length - 1]}]</b>
-                </Button>
-              ) : null}
-            </Space>
-          }
-        >
+            ) : null}
+          </Space>
+        }
+      >
+        <Space style={{ display: "flex", justifyContent: "space-between" }}>
           <Popover
             trigger={["click"]}
             placement="bottomLeft"
@@ -190,17 +187,21 @@ export const MagicWidget = observer(
               </Breadcrumb>
             </div>
           </Popover>
-          <Magic
-            onChange={(tree, includeRoot) => {
-              root.current = tree;
-              boxing.current = includeRoot;
+          <Radio.Group
+            optionType="button"
+            buttonStyle="solid"
+            defaultValue={boxing.current}
+            onChange={(e) => {
+              boxing.current = e.target.value;
             }}
-            allowDropBefore={props.allowDropBefore}
-            allowDropChildren={props.allowDropChildren}
-            transform={props.transform}
-          ></Magic>
-        </Drawer>
-      </React.Fragment>
-    );
-  },
-);
+            options={[
+              { label: "包含根对象节点", value: true },
+              { label: "排除根对象节点", value: false },
+            ]}
+          ></Radio.Group>
+        </Space>
+        <QuickEditor tree={tree}></QuickEditor>
+      </Drawer>
+    </React.Fragment>
+  );
+});
