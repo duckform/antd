@@ -21,4 +21,5 @@ bun run dev
 
 ## 进群讨论
 
-![wechat](https://r2.charlzyx.xyz/wechat-duckform.jpg)
+![wechat](https://r2.charlzyx.xyz/wechat-duckform.jpg?20240517)
+
